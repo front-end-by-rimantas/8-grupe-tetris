@@ -92,30 +92,28 @@ body {
                 .active-figure > .figure > .figure-cell {
                     display: inline-block;
                     float: left;
+                    background-color: transparent;
                 }
-                .figure.figure-o > .figure-cell {
+                .figure > .figure-cell.figure-o {
                     background-color: yellow;
                 }
-                .figure.figure-i > .figure-cell {
+                .figure > .figure-cell.figure-i {
                     background-color: aqua;
                 }
-                .figure.figure-t > .figure-cell {
+                .figure > .figure-cell.figure-t {
                     background-color: violet;
                 }
-                .figure.figure-j > .figure-cell {
+                .figure > .figure-cell.figure-j {
                     background-color: orange;
                 }
-                .figure.figure-l > .figure-cell {
+                .figure > .figure-cell.figure-l {
                     background-color: blue;
                 }
-                .figure.figure-s > .figure-cell {
+                .figure > .figure-cell.figure-s {
                     background-color: green;
                 }
-                .figure.figure-z > .figure-cell {
+                .figure > .figure-cell.figure-z {
                     background-color: red;
-                }
-                .figure > .figure-empty-cell {
-                    background-color: transparent !important;
                 }
 
     .other {

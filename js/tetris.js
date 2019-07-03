@@ -18,7 +18,6 @@ var tetris = (function(){
         figures = [
             {
                 name: 'o',
-                color: 'yellow',
                 map: [
                     [1, 1],
                     [1, 1]
@@ -26,14 +25,12 @@ var tetris = (function(){
             },
             {
                 name: 'i',
-                color: 'aqua',
                 map: [
                     [1, 1, 1, 1]
                 ]
             },
             {
                 name: 't',
-                color: 'violet',
                 map: [
                     [0, 1, 0],
                     [1, 1, 1]
@@ -41,7 +38,6 @@ var tetris = (function(){
             },
             {
                 name: 'j',
-                color: 'orange',
                 map: [
                     [0, 0, 1],
                     [1, 1, 1]
@@ -49,7 +45,6 @@ var tetris = (function(){
             },
             {
                 name: 'l',
-                color: 'blue',
                 map: [
                     [1, 0, 0],
                     [1, 1, 1]
@@ -57,7 +52,6 @@ var tetris = (function(){
             },
             {
                 name: 's',
-                color: 'green',
                 map: [
                     [0, 1, 1],
                     [1, 1, 0]
@@ -65,7 +59,6 @@ var tetris = (function(){
             },
             {
                 name: 'z',
-                color: 'red',
                 map: [
                     [1, 1, 0],
                     [0, 1, 1]
@@ -231,11 +224,12 @@ var tetris = (function(){
             f = figures[nextFigureIndex].map,
             figureWidth = f[0].length * cellSize + 'px',
             figureHeight = f.length * cellSize + 'px',
-            HTML = `<div class="figure figure-${figures[nextFigureIndex].name}" style="width: ${figureWidth}; height: ${figureHeight}; margin-left: ${currentFigure.position.x * cellSize}px; margin-top: ${currentFigure.position.y * cellSize}px;">`;
+            name = figures[nextFigureIndex].name,
+            HTML = `<div class="figure" style="width: ${figureWidth}; height: ${figureHeight}; margin-left: ${currentFigure.position.x * cellSize}px; margin-top: ${currentFigure.position.y * cellSize}px;">`;
         
         f.forEach( figureRow => {
             figureRow.forEach( figureCell => {
-                HTML += `<div class="figure-cell ${ figureCell === 0 ? 'figure-empty-cell' : ''}" style="width: ${cellSize}px; height: ${cellSize}px;"></div>`;
+                HTML += `<div class="figure-cell ${ figureCell === 0 ? '' : 'figure-'+name}" style="width: ${cellSize}px; height: ${cellSize}px;"></div>`;
             });
         });
         HTML += '</div>';
