@@ -14,6 +14,7 @@ var tetris = (function(){
         },
         gameState = 'stopped',      // running, stopped, pause
         gameClock,
+        fullGameMap = [],           // array (eilutes) of occupancy (stulpeliu)
         figures = [
             {
                 name: 'o',
@@ -89,12 +90,14 @@ var tetris = (function(){
                     boardBackground = gameBoard.querySelector('.background'),
                     boardFigures = gameBoard.querySelector('.figure-layer'),
                     boardActiveFigure = gameBoard.querySelector('.active-figure'),
+                        activeFigure = boardActiveFigure.querySelector('.figure'),
             start = game.querySelector('.btn');
 
     // init
     board.size.width = parseInt( getComputedStyle( boardContainer ).width );
     board.size.height = parseInt( getComputedStyle( boardContainer ).height );
     renderBackground();
+    resetFullGameMap();
     
     
     // events
@@ -122,6 +125,17 @@ var tetris = (function(){
         return boardBackground.innerHTML = HTML;
     }
 
+    function resetFullGameMap() {
+        for ( let e=0; e<board.cells.y; e++ ) {
+            fullGameMap.push([]);
+            for ( let s=0; s<board.cells.x; s++ ) {
+                fullGameMap[e].push(0);
+            }
+        }
+        
+        return;
+    }
+
     function startGame() {
         if ( gameState === 'running' ) {
             gameState = 'paused';
@@ -139,7 +153,7 @@ var tetris = (function(){
             if ( gameState !== 'running' ) {
                 clearInterval(gameClock);
             }
-        }, 1000);
+        }, 500);
 
         return;
     }
@@ -155,19 +169,20 @@ var tetris = (function(){
         if ( gameState !== 'running' ) {
             return;
         }
-
-        console.log( gameState );
         
-        if ( currentFigure.canMoveDown === true ) {
-            console.log( 'taip, pasileidzia' );
-            
+        if ( canCurrentFigureMoveDown() ) {
+            currentFigure.position.y++;
+            activeFigure.style.marginTop = currentFigure.position.y * board.cells.cellSize + 'px';
         } else {
+            currentFigure.index = nextFigureIndex;
+            nextFigureIndex = -1;
+            selectNextFigure();
             addNewFigureToScreen();
         }
 
         // ar einamoji figura gali dar judeti zemyn
             // taip
-                // ok, tesiam...
+                // einamoji figura nusileidzia per liena linija zemyn
             // ne, nes ji pasieke dugna
                 // reikia naujos sekancios figuros
                 // pries tai isrinkta figura pradedame judinti
@@ -178,6 +193,21 @@ var tetris = (function(){
         return;
     }
 
+    function canCurrentFigureMoveDown() {
+        var can = true;
+
+        // ieskome priezasciu, kodel figura negale kristi zemiau
+            // pasieke dugna
+            // susiliete su kita figura apaciomis
+        
+        // ar pasieke dugna?
+        if ( board.cells.y - figures[ currentFigure.index ].map.length === currentFigure.position.y ) {
+            can = false;
+        }
+
+        return can;
+    }
+
     function addNewFigureToScreen() {
         // currentFigure kintamojo panaudojimas
         currentFigure = {
@@ -186,20 +216,22 @@ var tetris = (function(){
                 x: 4,
                 y: 0
             },
-            canControl: true
+            canControl: true,
+            canMoveDown: true
         };
 
-        boardActiveFigure.innerHTML = generateNewFigure( nextFigureIndex );
+        boardActiveFigure.innerHTML = generateNewFigure();
+        activeFigure = boardActiveFigure.querySelector('.figure');
 
         return;
     }
 
-    function generateNewFigure( index ) {
+    function generateNewFigure() {
         let cellSize = board.cells.cellSize,
-            f = figures[index].map,
+            f = figures[nextFigureIndex].map,
             figureWidth = f[0].length * cellSize + 'px',
             figureHeight = f.length * cellSize + 'px',
-            HTML = `<div class="figure figure-${figures[index].name}" style="width: ${figureWidth}; height: ${figureHeight}; margin-left: ${currentFigure.position.x * cellSize}px; margin-top: ${currentFigure.position.y * cellSize}px;">`;
+            HTML = `<div class="figure figure-${figures[nextFigureIndex].name}" style="width: ${figureWidth}; height: ${figureHeight}; margin-left: ${currentFigure.position.x * cellSize}px; margin-top: ${currentFigure.position.y * cellSize}px;">`;
         
         f.forEach( figureRow => {
             figureRow.forEach( figureCell => {
