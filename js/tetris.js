@@ -71,14 +71,24 @@ var tetris = (function(){
                 ]
             }
         ],
-        nextFigure = 0;
+        nextFigureIndex = -1,
+        currentFigure = {
+            index: 0,
+            position: {
+                x: 4,
+                y: 0
+            },
+            canControl: true,
+            canMoveDown: true
+        };
 
     // cache DOM
     var game = document.querySelector('#tetris'),
             boardContainer = game.querySelector('.board-container'),
                 gameBoard = boardContainer.querySelector('.board'),
                     boardBackground = gameBoard.querySelector('.background'),
-                    boardFigures = gameBoard.querySelector('.figures-layer'),
+                    boardFigures = gameBoard.querySelector('.figure-layer'),
+                    boardActiveFigure = gameBoard.querySelector('.active-figure'),
             start = game.querySelector('.btn');
 
     // init
@@ -108,6 +118,7 @@ var tetris = (function(){
             HTML += `<div class="cell" style="width: ${cellSize}px; height: ${cellSize}px;"></div>`;
         }
         gameBoard.style.width = board.cells.x * cellSize + 'px';
+        gameBoard.style.height = board.cells.y * cellSize + 'px';
         return boardBackground.innerHTML = HTML;
     }
 
@@ -119,6 +130,7 @@ var tetris = (function(){
         }
 
         selectNextFigure();
+        addNewFigureToScreen();
         gameState = 'running';
 
         gameClock = setInterval(()=>{
@@ -128,13 +140,15 @@ var tetris = (function(){
                 clearInterval(gameClock);
             }
         }, 1000);
-        
 
         return;
     }
 
     function selectNextFigure() {
-        return nextFigure = Math.floor( Math.random() * figures.length );
+        if ( nextFigureIndex >= 0 ) {
+            return;
+        }
+        return nextFigureIndex = Math.floor( Math.random() * figures.length );
     }
 
     function figureProcess() {
@@ -144,11 +158,17 @@ var tetris = (function(){
 
         console.log( gameState );
         
+        if ( currentFigure.canMoveDown === true ) {
+            console.log( 'taip, pasileidzia' );
+            
+        } else {
+            addNewFigureToScreen();
+        }
 
-        // ar figura jau sugeneruota
-            // taip ir ji juda zemyn
+        // ar einamoji figura gali dar judeti zemyn
+            // taip
                 // ok, tesiam...
-            // ne, nes ji pasieke dugna arba yra pati pirma zaidime
+            // ne, nes ji pasieke dugna
                 // reikia naujos sekancios figuros
                 // pries tai isrinkta figura pradedame judinti
                     // ja pastatome virsuje per viduri
@@ -156,6 +176,38 @@ var tetris = (function(){
                     // kartojame procesa???
 
         return;
+    }
+
+    function addNewFigureToScreen() {
+        // currentFigure kintamojo panaudojimas
+        currentFigure = {
+            index: nextFigureIndex,
+            position: {
+                x: 4,
+                y: 0
+            },
+            canControl: true
+        };
+
+        boardActiveFigure.innerHTML = generateNewFigure( nextFigureIndex );
+
+        return;
+    }
+
+    function generateNewFigure( index ) {
+        let cellSize = board.cells.cellSize,
+            f = figures[index].map,
+            figureWidth = f[0].length * cellSize + 'px',
+            figureHeight = f.length * cellSize + 'px',
+            HTML = `<div class="figure figure-${figures[index].name}" style="width: ${figureWidth}; height: ${figureHeight}; margin-left: ${currentFigure.position.x * cellSize}px; margin-top: ${currentFigure.position.y * cellSize}px;">`;
+        
+        f.forEach( figureRow => {
+            figureRow.forEach( figureCell => {
+                HTML += `<div class="figure-cell ${ figureCell === 0 ? 'figure-empty-cell' : ''}" style="width: ${cellSize}px; height: ${cellSize}px;"></div>`;
+            });
+        });
+        HTML += '</div>';
+        return HTML;
     }
 
 

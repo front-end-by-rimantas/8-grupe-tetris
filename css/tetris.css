@@ -52,12 +52,16 @@ body {
             display: inline-block;
             max-width: 100%;
             max-height: 100%;
+            position: relative;
         }
             .board-container > .board > .background {
                 display: inline-block;
                 width: 100%;
                 height: 100%;
                 background-color: #606060;
+                position: absolute;
+                top: 0;
+                left: 0;
             }
                 .board-container > .board > .background > .cell {
                     display: inline-block;
@@ -69,7 +73,50 @@ body {
                 width: 100%;
                 height: 100%;
                 background-color: transparent;
+                position: absolute;
+                top: 0;
+                left: 0;
             }
+            .board-container > .board > .active-figure {
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                background-color: transparent;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            .active-figure > .figure {
+                display: inline-block;
+            }
+                .active-figure > .figure > .figure-cell {
+                    display: inline-block;
+                    float: left;
+                }
+                .figure.figure-o > .figure-cell {
+                    background-color: yellow;
+                }
+                .figure.figure-i > .figure-cell {
+                    background-color: aqua;
+                }
+                .figure.figure-t > .figure-cell {
+                    background-color: violet;
+                }
+                .figure.figure-j > .figure-cell {
+                    background-color: orange;
+                }
+                .figure.figure-l > .figure-cell {
+                    background-color: blue;
+                }
+                .figure.figure-s > .figure-cell {
+                    background-color: green;
+                }
+                .figure.figure-z > .figure-cell {
+                    background-color: red;
+                }
+                .figure > .figure-empty-cell {
+                    background-color: transparent !important;
+                }
 
     .other {
         display: inline-block;
