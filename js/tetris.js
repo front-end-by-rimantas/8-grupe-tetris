@@ -122,9 +122,10 @@ var tetris = (function(){
         for ( let e=0; e<board.cells.y; e++ ) {
             fullGameMap.push([]);
             for ( let s=0; s<board.cells.x; s++ ) {
-                fullGameMap[e].push(0);
+                fullGameMap[e].push(-1);
             }
         }
+        console.log( fullGameMap );
         
         return;
     }
@@ -163,26 +164,39 @@ var tetris = (function(){
             return;
         }
         
+        // ar einamoji figura gali dar judeti zemyn
         if ( canCurrentFigureMoveDown() ) {
+            // einamoji figura nusileidzia per liena linija zemyn
             currentFigure.position.y++;
             activeFigure.style.marginTop = currentFigure.position.y * board.cells.cellSize + 'px';
         } else {
+            // reikia naujos sekancios figuros
+            // pries tai isrinkta figura pradedame judinti
+                // ja pastatome virsuje per viduri
+                // leidziame figurai kristi zemyn
+                // kartojame procesa???
+            oldFigureToFullMap();
             currentFigure.index = nextFigureIndex;
             nextFigureIndex = -1;
             selectNextFigure();
             addNewFigureToScreen();
         }
 
-        // ar einamoji figura gali dar judeti zemyn
-            // taip
-                // einamoji figura nusileidzia per liena linija zemyn
-            // ne, nes ji pasieke dugna
-                // reikia naujos sekancios figuros
-                // pries tai isrinkta figura pradedame judinti
-                    // ja pastatome virsuje per viduri
-                    // leidziame figurai kristi zemyn
-                    // kartojame procesa???
+        return;
+    }
 
+    function oldFigureToFullMap() {
+        let layout = figures[ currentFigure.index ].map,
+            position = currentFigure.position;
+        
+        for ( let y=0; y<layout.length; y++ ) {
+            for ( let x=0; x<layout[0].length; x++ ) {
+                if ( layout[y][x] === 1 ) {
+                    fullGameMap[ position.y + y ][ position.x + x ] = figures[ currentFigure.index ].name;
+                }
+            }
+        }
+        
         return;
     }
 
@@ -197,6 +211,8 @@ var tetris = (function(){
         if ( board.cells.y - figures[ currentFigure.index ].map.length === currentFigure.position.y ) {
             can = false;
         }
+
+        // susiliete su kita figura apaciomis
 
         return can;
     }
