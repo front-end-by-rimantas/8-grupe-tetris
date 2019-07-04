@@ -22,22 +22,40 @@ var tetris = (function(){
                     [1, 1],
                     [1, 1]
                 ],
-                contact: [
-                    [1, 0],
-                    [1, 1]
-                ]
+                contact: {
+                    bottom: [
+                        [1, 0],
+                        [1, 1]
+                    ],
+                    left: [
+                        [0, 0],
+                        [1, 0]
+                    ],
+                    right: [
+                        [0, 1],
+                        [1, 1]
+                    ]
+                }
             },
             {
                 name: 'i',
                 map: [
                     [1, 1, 1, 1]
                 ],
-                contact: [
-                    [0, 0],
-                    [0, 1],
-                    [0, 2],
-                    [0, 3]
-                ]
+                contact: {
+                    bottom: [
+                        [0, 0],
+                        [0, 1],
+                        [0, 2],
+                        [0, 3]
+                    ],
+                    left: [
+                        [0, 0]
+                    ],
+                    right: [
+                        [0, 3]
+                    ]
+                }
             },
             {
                 name: 't',
@@ -45,11 +63,21 @@ var tetris = (function(){
                     [0, 1, 0],
                     [1, 1, 1]
                 ],
-                contact: [
-                    [1, 0],
-                    [1, 1],
-                    [1, 2]
-                ]
+                contact: {
+                    bottom: [
+                        [1, 0],
+                        [1, 1],
+                        [1, 2]
+                    ],
+                    left: [
+                        [0, 1],
+                        [1, 0]
+                    ],
+                    right: [
+                        [0, 1],
+                        [1, 2]
+                    ]
+                }
             },
             {
                 name: 'j',
@@ -57,11 +85,21 @@ var tetris = (function(){
                     [0, 0, 1],
                     [1, 1, 1]
                 ],
-                contact: [
-                    [1, 0],
-                    [1, 1],
-                    [1, 2]
-                ]
+                contact: {
+                    bottom: [
+                        [1, 0],
+                        [1, 1],
+                        [1, 2]
+                    ],
+                    left: [
+                        [0, 2],
+                        [1, 0]
+                    ],
+                    right: [
+                        [0, 2],
+                        [1, 2]
+                    ]
+                }
             },
             {
                 name: 'l',
@@ -69,11 +107,21 @@ var tetris = (function(){
                     [1, 0, 0],
                     [1, 1, 1]
                 ],
-                contact: [
-                    [1, 0],
-                    [1, 1],
-                    [1, 2]
-                ]
+                contact: {
+                    bottom: [
+                        [1, 0],
+                        [1, 1],
+                        [1, 2]
+                    ],
+                    left: [
+                        [0, 0],
+                        [1, 0]
+                    ],
+                    right: [
+                        [0, 1],
+                        [1, 2]
+                    ]
+                }
             },
             {
                 name: 's',
@@ -81,11 +129,21 @@ var tetris = (function(){
                     [0, 1, 1],
                     [1, 1, 0]
                 ],
-                contact: [
-                    [1, 0],
-                    [1, 1],
-                    [0, 2]
-                ]
+                contact: {
+                    bottom: [
+                        [1, 0],
+                        [1, 1],
+                        [0, 2]
+                    ],
+                    left: [
+                        [0, 1],
+                        [1, 0]
+                    ],
+                    right: [
+                        [0, 2],
+                        [1, 1]
+                    ]
+                }
             },
             {
                 name: 'z',
@@ -93,11 +151,21 @@ var tetris = (function(){
                     [1, 1, 0],
                     [0, 1, 1]
                 ],
-                contact: [
-                    [0, 0],
-                    [1, 1],
-                    [1, 2]
-                ]
+                contact: {
+                    bottom: [
+                        [0, 0],
+                        [1, 1],
+                        [1, 2]
+                    ],
+                    left: [
+                        [0, 0],
+                        [1, 1]
+                    ],
+                    right: [
+                        [0, 1],
+                        [1, 2]
+                    ]
+                }
             }
         ],
         nextFigureIndex = -1,
@@ -190,7 +258,7 @@ var tetris = (function(){
             if ( gameState !== 'running' ) {
                 clearInterval(gameClock);
             }
-        }, 300);
+        }, 200);
 
         return;
     }
@@ -247,7 +315,7 @@ var tetris = (function(){
 
     function canCurrentFigureMoveDown() {
         var can = true,
-            contact = figures[ currentFigure.index ].contact;
+            contact = figures[ currentFigure.index ].contact.bottom;
 
         // ieskome priezasciu, kodel figura negale kristi zemiau
             // pasieke dugna
@@ -268,6 +336,45 @@ var tetris = (function(){
             }
         }
 
+        return can;
+    }
+
+    function canCurrentFigureMoveSideways( side ) {
+        let can = true,
+            contact = figures[ currentFigure.index ].contact[side];
+        console.log( currentFigure.position );
+        
+
+        if ( side === 'left' && currentFigure.position.x === 0 ) {
+            // ar pasieke kairini krasta
+            return false;
+        } else if ( side === 'right' &&
+             currentFigure.position.x + figures[ currentFigure.index ].map[0].length === board.cells.x ) {
+            // ar pasieke desini krasta
+        
+            console.log( can );
+            return false;
+        } else {
+            // susiliete su kita figura is sono (kaire arba desine)
+            for ( let c=0; c<contact.length; c++ ) {
+                let y = currentFigure.position.y + contact[c][0] + 1,
+                    x = currentFigure.position.x + contact[c][1];
+                
+                // tikrinant kaire krypti reikia x -1
+                if ( side === 'left' ) {
+                    x--;
+                }
+                // tikrinant desine krypti reikia x vertei prideti elemento ploti ir +1
+                if ( side === 'right' ) {
+                    x = x + figures[ currentFigure.index ].map[0].length + 1;
+                }
+
+                if ( fullGameMap[y][x] !== -1 ) {
+                    return false;
+                }
+            }
+        }
+        
         return can;
     }
 
@@ -309,13 +416,13 @@ var tetris = (function(){
     function moveCurrentFigure( event ) {
         switch ( event.keyCode ) {
             case 65:                            // a
-                if ( currentFigure.position.x > 0 ) {
+                if ( canCurrentFigureMoveSideways( 'left' ) ) {
                     currentFigure.position.x--;
                 }
                 break;
                 
             case 68:                            // d
-                if ( currentFigure.position.x + figures[ currentFigure.index ].map[0].length < board.cells.x ) {
+                if ( canCurrentFigureMoveSideways( 'right' ) ) {
                     currentFigure.position.x++;
                 }
                 break;
