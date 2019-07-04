@@ -58,16 +58,42 @@ body {
                 display: inline-block;
                 width: 100%;
                 height: 100%;
-                background-color: #606060;
+                background-color: #CCC;
                 position: absolute;
                 top: 0;
                 left: 0;
             }
-                .board-container > .board > .background > .cell {
+                .board-container > .board > .background > .row {
                     display: inline-block;
-                    border: 1px solid #000;
+                    width: 100%;
                     float: left;
                 }
+                    .board-container > .board > .background .cell {
+                        display: inline-block;
+                        border: 1px solid #000;
+                        float: left;
+                    }
+                    .board-container > .board > .background .cell.cell-o {
+                        background-color: yellow;
+                    }
+                    .board-container > .board > .background .cell.cell-i {
+                        background-color: aqua;
+                    }
+                    .board-container > .board > .background .cell.cell-t {
+                        background-color: violet;
+                    }
+                    .board-container > .board > .background .cell.cell-j {
+                        background-color: orange;
+                    }
+                    .board-container > .board > .background .cell.cell-l {
+                        background-color: blue;
+                    }
+                    .board-container > .board > .background .cell.cell-s {
+                        background-color: green;
+                    }
+                    .board-container > .board > .background .cell.cell-z {
+                        background-color: red;
+                    }
             .board-container > .board > .figure-layer {
                 display: inline-block;
                 width: 100%;

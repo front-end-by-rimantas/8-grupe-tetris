@@ -81,7 +81,6 @@ var tetris = (function(){
             boardContainer = game.querySelector('.board-container'),
                 gameBoard = boardContainer.querySelector('.board'),
                     boardBackground = gameBoard.querySelector('.background'),
-                    boardFigures = gameBoard.querySelector('.figure-layer'),
                     boardActiveFigure = gameBoard.querySelector('.active-figure'),
                         activeFigure = boardActiveFigure.querySelector('.figure'),
             start = game.querySelector('.btn');
@@ -89,12 +88,13 @@ var tetris = (function(){
     // init
     board.size.width = parseInt( getComputedStyle( boardContainer ).width );
     board.size.height = parseInt( getComputedStyle( boardContainer ).height );
-    renderBackground();
     resetFullGameMap();
+    renderBackground();
     
     
     // events
     start.addEventListener('click', startGame);
+    window.addEventListener('keyup', moveCurrentFigure);
 
     // methods
     function renderBackground() {
@@ -108,13 +108,23 @@ var tetris = (function(){
             board.cells.cellSize = maxCellHeight;
             cellSize = maxCellHeight;
         }
-        
-        let HTML = '';
-        for ( let i=0; i<board.cells.x*board.cells.y; i++ ) {
-            HTML += `<div class="cell" style="width: ${cellSize}px; height: ${cellSize}px;"></div>`;
-        }
         gameBoard.style.width = board.cells.x * cellSize + 'px';
         gameBoard.style.height = board.cells.y * cellSize + 'px';
+
+        return refreshBackground();
+    }
+
+    function refreshBackground() {
+        let cellSize = board.cells.cellSize,
+            HTML = '';
+        for ( let y=0; y<board.cells.y; y++ ) {
+            HTML += `<div class="row" style="height: ${cellSize}px;">`;
+            for ( let x=0; x<board.cells.x; x++ ) {
+                let cellName = fullGameMap[y][x];
+                HTML += `<div class="cell ${ cellName === -1 ? '' : 'cell-'+cellName }" style="width: ${cellSize}px; height: ${cellSize}px;"></div>`;
+            }
+            HTML += `</div>`;
+        }
         return boardBackground.innerHTML = HTML;
     }
 
@@ -125,8 +135,6 @@ var tetris = (function(){
                 fullGameMap[e].push(-1);
             }
         }
-        console.log( fullGameMap );
-        
         return;
     }
 
@@ -147,7 +155,7 @@ var tetris = (function(){
             if ( gameState !== 'running' ) {
                 clearInterval(gameClock);
             }
-        }, 500);
+        }, 200);
 
         return;
     }
@@ -169,6 +177,8 @@ var tetris = (function(){
             // einamoji figura nusileidzia per liena linija zemyn
             currentFigure.position.y++;
             activeFigure.style.marginTop = currentFigure.position.y * board.cells.cellSize + 'px';
+            // einamoji pajudinama i sonus
+            activeFigure.style.marginLeft = currentFigure.position.x * board.cells.cellSize + 'px';
         } else {
             // reikia naujos sekancios figuros
             // pries tai isrinkta figura pradedame judinti
@@ -197,7 +207,7 @@ var tetris = (function(){
             }
         }
         
-        return;
+        return refreshBackground();
     }
 
     function canCurrentFigureMoveDown() {
@@ -252,7 +262,49 @@ var tetris = (function(){
         return HTML;
     }
 
+    function moveCurrentFigure( event ) {
+        switch ( event.keyCode ) {
+            case 65:                            // a
+                if ( currentFigure.position.x > 0 ) {
+                    currentFigure.position.x--;
+                }
+                break;
+                
+            case 68:                            // d
+                if ( currentFigure.position.x + figures[ currentFigure.index ].map[0].length < board.cells.x ) {
+                    currentFigure.position.x++;
+                }
+                break;
+            
+            case 87:                            // w
+                break;
+                
+            case 83:                            // s
+                break;
+        
+            default:
+                break;
+        }
+        
+        return;
+    }
+
 
     // access points
+    return {
+        map: fullGameMap
+    }
 
+})();
+
+
+
+
+var game = (function(){
+    // logika
+    var a = 5;
+
+    return {
+        saskaitosBalansas: a
+    }
 })();
