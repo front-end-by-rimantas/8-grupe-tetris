@@ -21,12 +21,22 @@ var tetris = (function(){
                 map: [
                     [1, 1],
                     [1, 1]
+                ],
+                contact: [
+                    [1, 0],
+                    [1, 1]
                 ]
             },
             {
                 name: 'i',
                 map: [
                     [1, 1, 1, 1]
+                ],
+                contact: [
+                    [0, 0],
+                    [0, 1],
+                    [0, 2],
+                    [0, 3]
                 ]
             },
             {
@@ -34,6 +44,11 @@ var tetris = (function(){
                 map: [
                     [0, 1, 0],
                     [1, 1, 1]
+                ],
+                contact: [
+                    [1, 0],
+                    [1, 1],
+                    [1, 2]
                 ]
             },
             {
@@ -41,6 +56,11 @@ var tetris = (function(){
                 map: [
                     [0, 0, 1],
                     [1, 1, 1]
+                ],
+                contact: [
+                    [1, 0],
+                    [1, 1],
+                    [1, 2]
                 ]
             },
             {
@@ -48,6 +68,11 @@ var tetris = (function(){
                 map: [
                     [1, 0, 0],
                     [1, 1, 1]
+                ],
+                contact: [
+                    [1, 0],
+                    [1, 1],
+                    [1, 2]
                 ]
             },
             {
@@ -55,6 +80,11 @@ var tetris = (function(){
                 map: [
                     [0, 1, 1],
                     [1, 1, 0]
+                ],
+                contact: [
+                    [1, 0],
+                    [1, 1],
+                    [0, 2]
                 ]
             },
             {
@@ -62,6 +92,11 @@ var tetris = (function(){
                 map: [
                     [1, 1, 0],
                     [0, 1, 1]
+                ],
+                contact: [
+                    [0, 0],
+                    [1, 1],
+                    [1, 2]
                 ]
             }
         ],
@@ -155,7 +190,7 @@ var tetris = (function(){
             if ( gameState !== 'running' ) {
                 clearInterval(gameClock);
             }
-        }, 200);
+        }, 300);
 
         return;
     }
@@ -211,7 +246,8 @@ var tetris = (function(){
     }
 
     function canCurrentFigureMoveDown() {
-        var can = true;
+        var can = true,
+            contact = figures[ currentFigure.index ].contact;
 
         // ieskome priezasciu, kodel figura negale kristi zemiau
             // pasieke dugna
@@ -219,10 +255,18 @@ var tetris = (function(){
         
         // ar pasieke dugna?
         if ( board.cells.y - figures[ currentFigure.index ].map.length === currentFigure.position.y ) {
-            can = false;
+            return false;
+        } else {
+            // susiliete su kita figura apaciomis
+            for ( let c=0; c<contact.length; c++ ) {
+                let y = currentFigure.position.y + contact[c][0] + 1,
+                    x = currentFigure.position.x + contact[c][1];
+                
+                if ( fullGameMap[y][x] !== -1 ) {
+                    return false;
+                }
+            }
         }
-
-        // susiliete su kita figura apaciomis
 
         return can;
     }
